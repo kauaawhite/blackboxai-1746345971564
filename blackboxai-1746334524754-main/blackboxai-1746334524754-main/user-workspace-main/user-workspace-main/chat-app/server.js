@@ -69,78 +69,63 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+const { v4: uuidv4 } = require('uuid');
+
 // Handle socket connection
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  // Handle login event with password
+  // Handle login event with custom username and password
   socket.on('login', (data) => {
-    try {
-      if (!data || typeof data !== 'object') {
-        socket.emit('errorMessage', 'Invalid login data.');
-        return;
-      }
-      const { username, password } = data;
-      const allowedUsers = {
-        user1: 'password1',
-        user2: 'password2'
-      };
-
-      if (!allowedUsers.hasOwnProperty(username)) {
-        socket.emit('errorMessage', 'Invalid username. Only user1 and user2 are allowed.');
-        return;
-      }
-
-      if (allowedUsers[username] !== password) {
-        socket.emit('errorMessage', 'Incorrect password.');
-        return;
-      }
-
-      // Check if username already logged in
-      if (Object.values(users).includes(username)) {
-        socket.emit('errorMessage', 'User already logged in.');
-        return;
-      }
-
-      users[socket.id] = username;
-      sockets[username] = socket.id;
-      onlineUsers.add(username);
-      console.log(`User logged in: ${username} with socket id ${socket.id}`);
-
-      // Notify user of login success
-      socket.emit('loginSuccess', username);
-
-      // Notify chat partner that this user is online
-      const chatPartner = username === 'user1' ? 'user2' : 'user1';
-      const partnerSocketId = sockets[chatPartner];
-      if (partnerSocketId) {
-        io.to(partnerSocketId).emit('partnerOnlineStatus', { username: username, online: true });
-      }
-
-      // Deliver undelivered messages if any
-      if (undeliveredMessages[username]) {
-        undeliveredMessages[username].forEach((msg) => {
-          socket.emit('receiveMessage', msg);
-        });
-        delete undeliveredMessages[username];
-        saveUndeliveredMessages();
-      }
-
-      // Send full message history to user
-      if (messagesHistory[username]) {
-        messagesHistory[username].forEach((msg) => {
-          socket.emit('receiveMessage', msg);
-        });
-      }
-    } catch (err) {
-      console.error('Error in login handler:', err);
-      socket.emit('errorMessage', 'Internal server error during login.');
+    const { username, password } = data;
+    if (!username || !password) {
+      socket.emit('errorMessage', 'Username and password are required.');
+      return;
     }
+    if (Object.values(users).includes(username)) {
+      socket.emit('errorMessage', 'Username is already taken.');
+      return;
+    }
+    if ((username === 'user1' && password === 'pass1') || (username === 'user2' && password === 'pass2')) {
+      // Valid credentials
+    } else {
+      socket.emit('errorMessage', 'Invalid credentials.');
+      return;
+    }
+
+    users[socket.id] = username;
+    sockets[username] = socket.id;
+    onlineUsers.add(username);
+    console.log(`User logged in: ${username} with socket id ${socket.id}`);
+
+    // Notify user of login success
+    socket.emit('loginSuccess', username);
+
+    // Notify chat partner that this user is online
+    const chatPartner = username === 'user1' ? 'user2' : 'user1';
+    const partnerSocketId = sockets[chatPartner];
+    if (partnerSocketId) {
+      io.to(partnerSocketId).emit('partnerOnlineStatus', { username: username, online: true });
+    }
+
+    // Deliver undelivered messages if any
+    if (undeliveredMessages[username]) {
+      undeliveredMessages[username].forEach((msg) => {
+        socket.emit('receiveMessage', msg);
+      });
+      delete undeliveredMessages[username];
+      saveUndeliveredMessages();
+    }
+
+    // Send full message history to user
+    // if (messagesHistory[username]) {
+    //   messagesHistory[username].forEach((msg) => {
+    //     socket.emit('receiveMessage', msg);
+    //   });
+    // }
   });
 
   // Handle sending message
-  const { v4: uuidv4 } = require('uuid');
-
   socket.on('sendMessage', (data) => {
     try {
       const from = users[socket.id];
@@ -188,11 +173,11 @@ io.on('connection', (socket) => {
         saveUndeliveredMessages();
       }
 
-      // Send message back to sender with single tick status
-      socket.emit('messageSent', { to: data.to, message: data.message, image: data.image, files: data.files, timestamp, messageId, status: 'sent' });
+    // Send message back to sender with single tick status
+    socket.emit('messageSent', { to: data.to, message: data.message, image: data.image, files: data.files, timestamp, messageId, status: 'sent' });
 
-      // Also send message to sender's own socket to display
-      socket.emit('receiveMessage', msgPayload);
+    // Also send message to sender's own socket to display
+    // socket.emit('receiveMessage', msgPayload); // Commented out to avoid double display
     } catch (err) {
       console.error('Error in sendMessage handler:', err);
       socket.emit('errorMessage', 'Internal server error during sending message.');
