@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Call</title>
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ECE5DD;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #callStatus {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #075E54;
+    }
+    #videos {
+      display: flex;
+      gap: 1rem;
+    }
+    video {
+      width: 320px;
+      height: 240px;
+      background-color: black;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    #endCallBtn {
+      margin-top: 1.5rem;
+      background-color: #ef4444;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    #endCallBtn:hover {
+      background-color: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <div id="callStatus">Calling...</div>
+  <div id="videos">
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay muted playsinline></video>
+  </div>
+  <div id="callNotification" class="hidden fixed inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-sm w-full text-center">
+      <p class="text-lg font-semibold mb-4" id="callerName">Incoming call...</p>
+      <div class="flex justify-center space-x-4">
+        <button id="acceptCallBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Accept</button>
+        <button id="rejectCallBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Reject</button>
+      </div>
+    </div>
+  </div>
+  <div id="controls">
+    <button id="muteMicBtn" class="control-btn" title="Mute/Unmute Microphone"><i class="fas fa-microphone"></i></button>
+    <button id="toggleSpeakerBtn" class="control-btn" title="Speaker On/Off"><i class="fas fa-volume-up"></i></button>
+  </div>
+  <button id="endCallBtn">End Call</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="call.js"></script>
+</body>
+</html>
