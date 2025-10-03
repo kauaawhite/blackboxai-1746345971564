@@ -1,7 +1,7 @@
 {
   "name": "chat-app",
   "version": "1.0.0",
-  "description": "Two-person chat web app like WhatsApp",
+  "description": "Two-person chat web app",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
