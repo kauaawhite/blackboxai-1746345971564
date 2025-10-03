@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WhatsApp Clone</title>
-  <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+  <title>Massager by sahil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
       background-color: #ECE5DD;
     }
     .chat-bubble {
-      max-width: 70%;
+      max-width: 80%;
       padding: 0.5rem 1rem;
       border-radius: 1rem;
       margin-bottom: 0.5rem;
@@ -24,12 +25,18 @@
       display: inline-block;
       clear: both;
     }
+    @media (min-width: 768px) {
+      .chat-bubble {
+        max-width: 70%;
+      }
+    }
     .chat-bubble.sent {
       background-color: #DCF8C6;
       color: #202c33;
       float: right;
       border-bottom-right-radius: 0;
       text-align: left;
+      clear: both;
     }
     .chat-bubble.received {
       background-color: #FFFFFF;
@@ -38,6 +45,7 @@
       border-bottom-left-radius: 0;
       border: none;
       text-align: left;
+      clear: both;
     }
     .scrollable {
       overflow-y: auto;
@@ -66,82 +74,145 @@
     #menuDropdown button:hover {
       background-color: #075E54;
     }
+    /* Light theme for chat page */
+    #chatPage {
+      background-color: #ffffff;
+      color: #000000;
+    }
+    /* Style for message input and adjacent icons */
+    #messageForm {
+      background-color: #f0f0f0;
+      border-radius: 9999px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    #messageInput {
+      flex-grow: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 1rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 9999px;
+    }
+    #messageForm button[type="button"] {
+      color: #4a4a4a;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: color 0.2s ease;
+    }
+    #messageForm button[type="button"]:hover {
+      color: #25D366;
+    }
+    /* Remove rupee icon button */
+    #messageForm button[title="Currency"] {
+      display: none;
+    }
+    /* Change chatWith text color */
+    #chatWith {
+      color: #128C7E; /* WhatsApp green */
+    }
   </style>
 </head>
-  <body class="bg-gray-100 h-screen flex items-center justify-center transition-colors duration-500" id="body">
+<body class="bg-gray-100 h-screen flex items-center justify-center transition-colors duration-500" id="body">
 
-  <div id="topBanner" style="position: fixed; top: 0; left: 0; width: 100%; height: 2.5rem; background-color: #075E54; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1rem; z-index: 10000;">
-    OG Creator – <a href="https://instagram.com/itx_sahilll.01/" target="_blank" rel="noopener noreferrer" style="color: #25D366; text-decoration: none; margin-left: 0.25rem;">itx_sahilll.01</a>
-  </div>
+<div id="topBanner" class="h-8 md:h-10 text-sm md:text-base" style="position: fixed; top: 0; left: 0; width: 100%; background-color: #075E54; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; z-index: 10000;">
+  OG Creator – <a href="https://instagram.com/pov.s4hil/" target="_blank" rel="noopener noreferrer" class="text-[#25D366] no-underline ml-1">pov.s4hil</a>
+</div>
 
-  <div id="loginPage" class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg" style="margin-top: 2.5rem;">
-    <h2 class="text-2xl font-semibold mb-4 text-center text-gray-800 dark:text-gray-200">Login</h2>
-    <form id="loginForm" class="flex flex-col space-y-4">
-      <input
-        type="text"
-        id="usernameInput"
-        placeholder="Enter user ID (user1 or user2)"
-        class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-        required
-      />
-      <input
-        type="password"
-        id="passwordInput"
-        placeholder="Enter password"
-        class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-        required
-      />
+<div id="loginPage" class="flex flex-col items-center justify-center min-h-screen bg-white p-4">
+  <div class="bg-gray-100 rounded-lg shadow-lg p-8 w-full max-w-md">
+    <div class="text-center mb-8">
+      <i class="fab fa-whatsapp text-6xl text-green-500 mb-4"></i>
+      <h1 class="text-3xl font-bold text-gray-800">Chat App</h1>
+      <p class="text-gray-600 mt-2">Enter your credentials to start chatting</p>
+    </div>
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <input
+          type="text"
+          id="usernameInput"
+          name="username"
+          placeholder="Username"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          autocomplete="off"
+          required
+        />
+      </div>
+      <div>
+        <input
+          type="password"
+          id="passwordInput"
+          name="password"
+          placeholder="Password"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          autocomplete="off"
+          required
+        />
+      </div>
       <button
         type="submit"
-        class="text-white py-2 rounded hover:bg-green-700 transition dark:bg-green-500 dark:hover:bg-green-600"
+        class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition duration-200 font-semibold"
       >
         Login
       </button>
     </form>
+    <p id="loginError" class="text-red-500 mt-4 text-center hidden"></p>
   </div>
+</div>
 
-  <div id="chatPage" class="hidden flex flex-col w-full max-w-4xl h-[90vh] bg-white rounded-lg shadow-lg dark:bg-gray-800">
-    <header class="flex items-center justify-between p-4 border-b border-gray-300 dark:border-gray-700">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100" id="chatWith">Chat</h2>
-      <div class="flex items-center justify-end w-full">
-        <button id="menuLogoutBtn" class="text-red-600 hover:bg-red-700 px-4 py-2 rounded flex items-center space-x-2">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
-        </button>
-      </div>
-    </header>
-    <main class="flex flex-col flex-grow p-4 space-y-4 overflow-y-auto scrollable" id="messagesContainer">
-      <!-- Messages will appear here -->
-    </main>
-    <form id="messageForm" class="flex p-4 border-t border-gray-300 dark:border-gray-700 items-center space-x-2">
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Type a message"
-        class="flex-grow border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-        autocomplete="off"
-      />
-      <input
-        type="file"
-        id="imageInput"
-        accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        multiple
-        class="hidden"
-      />
-      <label for="imageInput" class="cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-        <i class="fas fa-paperclip fa-lg"></i>
-      </label>
-      <button
-        type="submit"
-        class="ml-4 text-white p-3 rounded-full flex items-center justify-center hover:bg-green-700 active:bg-green-800 transition"
-        aria-label="Send message"
-      >
-        <i class="fas fa-paper-plane"></i>
+<div id="chatPage" class="flex flex-col w-full max-w-full h-screen bg-white rounded-lg shadow-lg" style="display: none;">
+  <header class="flex items-center justify-between p-2 border-b border-gray-300">
+    <h2 class="text-xl font-semibold text-gray-900" id="chatWith">Chat</h2>
+    <div class="flex items-center justify-end w-full space-x-4">
+      <button id="menuLogoutBtn" class="text-red-600 hover:bg-red-700 px-4 py-2 rounded flex items-center space-x-2">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
       </button>
-    </form>
-  </div>
+    </div>
+  </header>
+  <main class="flex flex-col flex-grow p-2 space-y-4 overflow-y-auto scrollable" id="messagesContainer">
+    <!-- Messages will appear here -->
+  </main>
+  <div id="messageForm" class="flex p-2 border-t border-gray-300 items-center space-x-2 bg-white rounded-full mx-2 mb-2 shadow-md">
+    <button type="button" class="text-gray-500 hover:text-gray-700 p-2 rounded-full transition" title="Emoji">
+      <i class="far fa-smile fa-lg"></i>
+    </button>
+    <input
+      type="text"
+      id="messageInput"
+      placeholder="Message"
+      class="flex-grow border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      autocomplete="off"
+    />
+    <button type="button" class="text-gray-500 hover:text-gray-700 p-2 rounded-full transition" title="Attachment" onclick="document.getElementById('imageInput').click()">
+      <i class="fas fa-paperclip fa-lg"></i>
+    </button>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="main.js"></script>
+    <input
+      type="file"
+      id="imageInput"
+      accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      multiple
+      class="hidden"
+    />
+    <button
+      type="button"
+      onclick="sendMessage()"
+      class="ml-2 text-white bg-green-500 p-3 rounded-full flex items-center justify-center hover:bg-green-700 active:bg-green-800 transition"
+      aria-label="Send message"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
